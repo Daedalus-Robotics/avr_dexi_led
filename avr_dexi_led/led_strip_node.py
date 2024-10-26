@@ -10,9 +10,9 @@ from rclpy.node import Node
 
 from dexi_intefaces.srv import SetLedEffect
 
-from dexi_led_strip.util import SPI, run_anim_until_done
-from dexi_led_strip.neopixel_ring_spi import NeoPixelRing_SPI
-from dexi_led_strip.channel_wrap_animation import ChannelWrapAnim
+from avr_dexi_led.util import SPI, run_anim_until_done
+from avr_dexi_led.neopixel_ring_spi import NeoPixelRing_SPI
+from avr_dexi_led.channel_wrap_animation import ChannelWrapAnim
 
 from adafruit_led_animation.animation import Animation
 from adafruit_led_animation.animation.solid import Solid
