@@ -158,7 +158,7 @@ class LEDStripNode(Node):
 
     def set_callback(self, request: SetLedEffect.Request, response: SetLedEffect.Response) -> SetLedEffect.Response:
         effect = request.effect
-        speed = ensure_non_zero(1, DEFAULT_ANIM_SPEED)
+        speed = ensure_non_zero(request.speed, DEFAULT_ANIM_SPEED)
         color = request.r, request.g, request.b
         size = ensure_non_zero(request.size, DEFAULT_ANIM_SIZE)
         info = AnimationInfo(speed, color, request.reverse, size)
