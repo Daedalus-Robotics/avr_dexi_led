@@ -10,8 +10,8 @@ from rclpy.node import Node
 
 from dexi_interfaces.srv import SetLedEffect
 
-from avr_dexi_led.util import SPI, run_anim_until_done
-from avr_dexi_led.neopixel_ring_spi import NeoPixelRing_SPI
+from avr_dexi_led.util import run_anim_until_done
+from avr_dexi_led.neopixel_ring import NeoPixelRing
 from avr_dexi_led.channel_wrap_animation import ChannelWrapAnim
 
 from adafruit_led_animation.animation import Animation
@@ -80,7 +80,7 @@ It should get a function that builds the animation.
 The function will be passed a Pixelbuf object, and an AnimationInfo object
 and should return the Animation object.
 """
-ANIMATION_LOOKUP: dict[str, Callable[[NeoPixelRing_SPI, AnimationInfo], Animation]] = {
+ANIMATION_LOOKUP: dict[str, Callable[[NeoPixelRing, AnimationInfo], Animation]] = {
     'base': lambda _, _1: None,
 
     '': lambda pixels, info: Solid(pixels, info.color),
@@ -107,10 +107,10 @@ class LEDStripNode(Node):
     def __init__(self) -> None:
         super().__init__('dexi_led_strip')
 
-        self.declare_parameter('spi_port', 1)
-        spi = SPI[self.get_parameter('spi_port').value]()
+        self.declare_parameter('pin', 12)
+        pin = self.get_parameter('pin').value
 
-        self.declare_parameter('led_count', 20)  # Actually 22
+        self.declare_parameter('led_count', 44)  # Actually 22
         led_count = self.get_parameter('led_count').value
 
         self.declare_parameter('start_index', 0)  # Actually 16
@@ -123,8 +123,8 @@ class LEDStripNode(Node):
 
         self.set_service = self.create_service(SetLedEffect, 'set', self.set_callback)
 
-        self.pixels = NeoPixelRing_SPI(
-            spi,
+        self.pixels = NeoPixelRing(
+            pin,
             led_count,
             pixel_order=pixel_order,
             brightness=1,

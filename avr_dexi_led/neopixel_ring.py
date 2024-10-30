@@ -1,8 +1,8 @@
 from typing import Any, Sequence
 
-from busio import SPI
-from neopixel_spi import NeoPixel_SPI
+from neopixel import NeoPixel
 from adafruit_pixelbuf import PixelBuf, ColorUnion
+import adafruit_blinka.microcontroller.bcm283x.pin as p
 
 
 class PixelbufView:
@@ -146,32 +146,24 @@ class MirroredPixelbufView(PixelbufView):
             self.show()
 
 
-class NeoPixelRing_SPI(NeoPixel_SPI):
+class NeoPixelRing(NeoPixel):
     def __init__(
         self,
-        spi: SPI,
+        pin: int,
         n: int,
         bpp: int = 3,
         brightness: float = 1.0,
         auto_write: bool = True,
         pixel_order: str | tuple[int, ...] | None = None,
-        frequency: int = 6400000,
-        reset_time: float = 80e-6,
-        bit0: int = 0b10000000, # 0b11000000,
-        bit1: int = 0b11110000,
         start_index: int = 0
     ) -> None:
         super().__init__(
-            spi,
+            p.Pin(pin),
             n,
             bpp=bpp,
             brightness=brightness,
             auto_write=auto_write,
             pixel_order=pixel_order,
-            frequency=frequency,
-            reset_time=reset_time,
-            bit0=bit0,
-            bit1=bit1
         )
         self._start_index = start_index
 
