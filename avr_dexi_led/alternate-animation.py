@@ -11,7 +11,7 @@ class Alternate(Animation):
         self._tick_end = 4
 
     def draw(self):
-        if self.tick%2 == 0:
+        if self._tick%2 == 0:
             try:
                 # Selects even item and sets it to Color A
                 self.pixel_object[::2] = [self.color_a]*(len(self.pixel_object)//2)
