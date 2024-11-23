@@ -39,7 +39,7 @@ def ensure_non_zero(value: float | int, default: Any = None) -> float | int | An
     return value
 
 
-class AnimationInfo(NamedTuple):
+class AnimationInfo:
     """
     Time in seconds between updates (lower is faster)
     """
@@ -57,8 +57,18 @@ class AnimationInfo(NamedTuple):
     """
     size: int
 
+    def __init__(self, speed: float, color: RGBColor, reverse: bool, size: int):
+        self.speed = speed
+        self.color = color
+        self.reverse = reverse
+        self.size = size
 
-class AnimationEntry(NamedTuple):
+    @property
+    def packed(self):
+        return self.speed, self.color, self.reverse, self.size
+
+
+class AnimationEntry:
     animation: Animation | None
     """
     Strip brightness when displaying the effect (0-1)
@@ -72,6 +82,22 @@ class AnimationEntry(NamedTuple):
     Number of full iterations before stopping the effect
     """
     iterations: int | None = None
+
+    def __init__(self, animation: Animation | None, brightness: float | None = None, duration: float | None = None, iterations: int | None = None):
+        self.animation = animation
+        self.brightness = brightness
+        self.duration = duration
+        self.iterations = iterations
+
+    @property
+    def packed(self):
+        return self.animation, self.brightness, self.duration, self.iterations
+
+    def __lt__(self, other):
+        return True
+
+    def __gt__(self, other):
+        return True
 
 
 """
@@ -175,6 +201,7 @@ class LEDStripNode(Node):
                     self.animation_queue.queue.clear()
 
             animation = ANIMATION_LOOKUP[effect](self.pixels, info)
+            self.get_logger().info(f"adding{animation}")
             self.animation_queue.put((priority, AnimationEntry(animation, brightness, duration, iterations)))
             self.animation_changed.set()
 
@@ -204,14 +231,22 @@ class LEDStripNode(Node):
 
                 with self.animation_queue.mutex:
                     queue_list = list(self.animation_queue.queue)
-                if priority is None or (len(queue_list) > 0 and min(queue_list)[0] <= priority):
+                if len(queue_list) > 0:
+                  self.get_logger().info(f'Queue: {queue_list}')
+                  self.get_logger().info(f"1 {priority} {min(queue_list)} {min(queue_list)[0]}")
+                override = False
+                if priority is None:
+                    override = True
+                else:
+                    override = len(queue_list) > 0 and min(queue_list)[0] <= priority
+                if override:
                     start_time = time.time()
                     try:
                         priority, entry = self.animation_queue.get(block=False)
                     except Empty:
                         priority = None
                         entry = AnimationEntry(None)
-                    animation, brightness, duration, iterations = entry
+                    animation, brightness, duration, iterations = entry.packed
 
                     if iterations is not None:
                         animation.add_cycle_complete_receiver(lambda _: iter_event.set())
