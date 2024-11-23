@@ -13,7 +13,7 @@ from dexi_interfaces.srv import SetLedEffect
 from avr_dexi_led.util import run_anim_until_done
 from avr_dexi_led.neopixel_ring import NeoPixelRing
 from avr_dexi_led.channel_wrap_animation import ChannelWrapAnim
-from avr_dexi_led.alternate-animation import Alternate
+from avr_dexi_led.alternate_animation import Alternate
 
 from adafruit_led_animation.animation import Animation
 from adafruit_led_animation.animation.solid import Solid
