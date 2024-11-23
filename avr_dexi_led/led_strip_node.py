@@ -13,6 +13,7 @@ from dexi_interfaces.srv import SetLedEffect
 from avr_dexi_led.util import run_anim_until_done
 from avr_dexi_led.neopixel_ring import NeoPixelRing
 from avr_dexi_led.channel_wrap_animation import ChannelWrapAnim
+from avr_dexi_led.alternate-animation import Alternate
 
 from adafruit_led_animation.animation import Animation
 from adafruit_led_animation.animation.solid import Solid
@@ -126,6 +127,13 @@ ANIMATION_LOOKUP: dict[str, Callable[[NeoPixelRing, AnimationInfo], Animation]] 
                                                        everse=info.reverse, ring=True),
 
     'channel_wrap': lambda pixels, info: ChannelWrapAnim(pixels, info.speed)
+
+    """
+    Alternate Animation takes in a tuple with two RGB colors 
+    ex: ((255,0,0),(255,255,255))
+    """
+    'alternate':  lambda pixels, info: Alternate(pixels, info.speed, info.color[0],info.color[1])
+
 }
 
 
