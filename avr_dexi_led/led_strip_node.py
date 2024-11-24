@@ -126,7 +126,7 @@ ANIMATION_LOOKUP: dict[str, Callable[[NeoPixelRing, AnimationInfo], Animation]] 
     'rainbow_comet': lambda pixels, info: RainbowComet(pixels, info.speed, tail_length=max(0, info.size - 1),
                                                        everse=info.reverse, ring=True),
 
-    'channel_wrap': lambda pixels, info: ChannelWrapAnim(pixels, info.speed)
+    'channel_wrap': lambda pixels, info: ChannelWrapAnim(pixels, info.speed),
 
     """
     Alternate Animation takes in a tuple with two RGB colors 
